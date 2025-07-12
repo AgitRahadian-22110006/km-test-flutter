@@ -93,7 +93,7 @@ class Screen2 extends StatelessWidget {
                           : const Padding(
                               padding: EdgeInsets.symmetric(vertical: 16),
                               child: Text(
-                                'No user selected yet',
+                                'No user selected yet?',
                                 style: TextStyle(fontSize: 16),
                               ),
                             ),
