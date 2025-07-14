@@ -33,7 +33,7 @@ class _Screen1State extends State<Screen1> {
           borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
         title: Text(
-          'Palindrome Check Suitmedia',
+          'Suitmedia',
           style: TextStyle(color: Colors.purpleAccent.shade100),
         ),
         content: Row(
