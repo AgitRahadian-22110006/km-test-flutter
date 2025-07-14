@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -16,7 +18,6 @@ class _Screen3State extends State<Screen3> {
   int _page = 1;
   bool _loading = false;
   bool _hasMore = true;
-
   final String _apiKey = 'reqres-free-v1';
 
   @override
@@ -24,9 +25,7 @@ class _Screen3State extends State<Screen3> {
     super.initState();
     _fetchPage();
     _ctrl.addListener(() {
-      if (_ctrl.position.pixels >=
-              _ctrl.position.maxScrollExtent - 100 &&
-          !_loading) {
+      if (_ctrl.position.pixels >= _ctrl.position.maxScrollExtent - 100 && !_loading) {
         _fetchPage();
       }
     });
@@ -41,7 +40,6 @@ class _Screen3State extends State<Screen3> {
         Uri.parse('https://reqres.in/api/users?page=$_page&per_page=6'),
         headers: {'x-api-key': _apiKey},
       );
-
       if (!mounted) return;
 
       if (res.statusCode == 200) {
@@ -62,14 +60,13 @@ class _Screen3State extends State<Screen3> {
       _showError('Error: $e');
     }
 
-    if (!mounted) return;
-    setState(() => _loading = false);
+    if (mounted) setState(() => _loading = false);
   }
 
   void _showError(String message) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red.shade700),
+      SnackBar(content: Text(message), backgroundColor: Colors.redAccent),
     );
   }
 
@@ -92,80 +89,135 @@ class _Screen3State extends State<Screen3> {
   Widget build(BuildContext context) {
     final st = context.read<UserState>();
     final isWide = MediaQuery.of(context).size.width > 600;
-    final padding = EdgeInsets.symmetric(
-      horizontal: isWide ? 80 : 16,
-      vertical: 16,
-    );
+    final padding = EdgeInsets.symmetric(horizontal: isWide ? 80 : 16, vertical: 16);
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
-      appBar: AppBar(
-        backgroundColor: Colors.teal.shade700,
-        elevation: 1,
-        centerTitle: true,
-        title: const Text(
-          'Choose a User',
-          style: TextStyle(fontWeight: FontWeight.w600),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF4A00E0),
+              Color(0xFF8E2DE2),
+              Color(0xFF000428),
+            ],
+            stops: [0.0, 0.5, 1.0],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
         ),
-        leading: const BackButton(color: Colors.white),
-      ),
-      body: Padding(
-        padding: padding,
-        child: RefreshIndicator(
-          color: Colors.teal.shade600,
-          onRefresh: _onRefresh,
-          child: _users.isEmpty && _loading
-              ? const Center(child: CircularProgressIndicator())
-              : ListView.builder(
-                  controller: _ctrl,
-                  itemCount: _users.length + (_hasMore ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index == _users.length) {
-                      return const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24),
-                        child: Center(child: CircularProgressIndicator()),
-                      );
-                    }
-                    final u = _users[index];
-                    return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14)),
-                      elevation: 2,
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.all(16),
-                        leading: CircleAvatar(
-                          radius: 30,
-                          backgroundImage: NetworkImage(u['avatar']),
-                          backgroundColor: Colors.grey.shade200,
-                        ),
-                        title: Text(
-                          '${u['first_name']} ${u['last_name']}',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.teal.shade900,
-                          ),
-                        ),
-                        subtitle: Text(
-                          u['email'],
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey.shade700,
-                          ),
-                        ),
-                        onTap: () {
-                          st.setSelectedUser(
-                            name: '${u['first_name']} ${u['last_name']}',
-                            email: u['email'],
-                            avatar: u['avatar'],
-                          );
-                          Navigator.pop(context);
-                        },
-                      ),
-                    );
-                  },
+        child: SafeArea(
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  border: Border(
+                    bottom: BorderSide(color: Colors.purpleAccent.shade100.withValues(alpha: 76), width: 1.5),
+                  ),
                 ),
+                child: Row(
+                  children: [
+                    BackButton(color: Colors.purpleAccent.shade100),
+                    Expanded(
+                      child: Text(
+                        'Choose a User',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.purpleAccent.shade100,
+                          shadows: [
+                            Shadow(blurRadius: 4, color: Colors.black54, offset: Offset(1, 1)),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 48),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: RefreshIndicator(
+                  color: Colors.purpleAccent.shade100,
+                  onRefresh: _onRefresh,
+                  child: _users.isEmpty && _loading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation(Colors.purpleAccent.shade100),
+                          ),
+                        )
+                      : ListView.builder(
+                          controller: _ctrl,
+                          padding: padding,
+                          itemCount: _users.length + (_hasMore ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            if (index == _users.length) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 24),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation(Colors.purpleAccent.shade100),
+                                  ),
+                                ),
+                              );
+                            }
+                            final u = _users[index];
+                            return Container(
+                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: Colors.purpleAccent.shade100.withValues(alpha: 76),
+                                  width: 1,
+                                ),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black54,
+                                    blurRadius: 12,
+                                    offset: Offset(0, 6),
+                                  ),
+                                ],
+                              ),
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.all(16),
+                                leading: CircleAvatar(
+                                  radius: 30,
+                                  backgroundImage: NetworkImage(u['avatar']),
+                                  backgroundColor: Colors.transparent,
+                                ),
+                                title: Text(
+                                  '${u['first_name']} ${u['last_name']}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.purpleAccent.shade100,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  u['email'],
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                                onTap: () {
+                                  st.setSelectedUser(
+                                    name: '${u['first_name']} ${u['last_name']}',
+                                    email: u['email'],
+                                    avatar: u['avatar'],
+                                  );
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
